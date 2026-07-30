@@ -10,9 +10,11 @@ export type ArticleProps = {
   tags: string[];
 };
 
+type PostEntries = CollectionEntry<"blog"> | CollectionEntry<"prose">;
+
 // Only pick heroImage and tags data.
 type ValidatedArticlePredefinedData = Pick<
-  CollectionEntry<"blog">["data"],
+  PostEntries["data"],
   "heroImage" | "tags"
 >;
 
@@ -36,7 +38,7 @@ export function toArticleProps(
     const errorDetail = articleGeneratedDataParseResult.error.issues
       .map((e) => `${e.path.join(".")}: ${e.message}`)
       .join("; ");
-    throw new Error(`[blog] "${id}" Invalid metadata: ${errorDetail}`);
+    throw new Error(`[posts] "${id}" Invalid metadata: ${errorDetail}`);
   }
 
   const { title, description, publishedAt, updatedAt } =

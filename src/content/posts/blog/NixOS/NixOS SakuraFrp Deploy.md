@@ -1,7 +1,6 @@
 ---
 heroImage:
 tags:
-  - Tech
   - NixOS
   - Server
 publishedAt: 2026-01-26

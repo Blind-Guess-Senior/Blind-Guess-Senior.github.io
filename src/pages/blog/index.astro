@@ -1,0 +1,14 @@
+---
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+import { getPostSummaries } from "../../lib/post-summary";
+import PostIndex from "../../layouts/lib/PostIndex.astro";
+import PostList from "../../components/PostList.astro";
+
+const posts = await getPostSummaries("blog");
+---
+
+<PostIndex title={`Blog | ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+  <section>
+    <PostList posts={posts} />
+  </section>
+</PostIndex>

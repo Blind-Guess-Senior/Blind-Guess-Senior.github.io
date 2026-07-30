@@ -154,6 +154,8 @@ vite.config.ts.timestamp-*
 # AI Agents
 .claude/
 .agents/
+CLAUDE.md
+AGENTS.md
 
 # tmp files
 TEMP/

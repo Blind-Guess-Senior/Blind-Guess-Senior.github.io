@@ -1,7 +1,6 @@
 ---
 heroImage:
 tags:
-  - Tech
   - GameDev
   - UE5
   - Compile

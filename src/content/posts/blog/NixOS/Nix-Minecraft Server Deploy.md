@@ -1,7 +1,6 @@
 ---
 heroImage:
 tags:
-  - Tech
   - NixOS
   - Server
   - Minecraft
@@ -84,7 +83,7 @@ inputs = {
 ```
 具体可配置项在此处查询：[NixOS Search - Options - minecraft-server](https://search.nixos.org/options?channel=25.11&query=minecraft-server) 
 `dataDir` 为所有数据所在的文件夹，`servers` 中的服务器每个都会在其下有一个自己的文件夹。文件夹名即为 `servers.<name>` 的name.
-`serverProperties` 即为`server.properties` 文件的内容，值全部使用字符串是可行且正确的操作。 `package` 指定服务端版本，mod配置见 [[#Reference]] 中的其他文章。
+`serverProperties` 即为`server.properties` 文件的内容，值全部使用字符串是可行且正确的操作。 `package` 指定服务端版本，mod配置见 [[#References]] 中的其他文章。
 
 ### Attach Server Console
 
@@ -95,7 +94,7 @@ inputs = {
 ### Deploy SakuraFrp
 
 配置樱花映射，以将服务器穿透至外部网络。
-见 [[SakuraFrp Deploy]] 
+见 [[NixOS SakuraFrp Deploy]] 
 
 ### References
 

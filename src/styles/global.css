@@ -87,7 +87,7 @@ p {
 }
 
 .prose p {
-	margin-bottom: 2em;
+	margin-bottom: 1.2em;
 	font-size: 0.85em;
 }
 
@@ -108,23 +108,6 @@ img {
 	max-width: 100%;
 	height: auto;
 	border-radius: 8px;
-}
-
-code {
-	padding: 2px 5px;
-	background-color: rgb(var(--gray-light));
-	border-radius: 2px;
-	font-family: var(--font-monaspace);
-	font-weight: 200;
-	font-size: 0.9em;
-}
-
-pre {
-	padding: 1.5em;
-	border-radius: 8px;
-	font-family: var(--font-monaspace);
-	font-weight: 200;
-	font-size: 0.75em;
 }
 
 pre>code {

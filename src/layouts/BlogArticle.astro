@@ -1,0 +1,10 @@
+---
+import Article from "./lib/Article.astro";
+import { type ArticleProps } from "../lib/article-props";
+
+type Props = ArticleProps;
+---
+
+<Article {...Astro.props}>
+  <slot />
+</Article>

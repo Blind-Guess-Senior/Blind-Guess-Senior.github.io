@@ -1,10 +1,10 @@
 ---
 import { type CollectionEntry, getCollection, render } from "astro:content";
-import BlogArticle from "../../layouts/BlogArticle.astro";
+import ProseArticle from "../../layouts/ProseArticle.astro";
 import { toArticleProps } from "../../lib/article-props";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog");
+  const posts = await getCollection("prose");
   return posts.map((post) => ({
     params: { slug: post.id },
     props: post,
@@ -19,6 +19,6 @@ const { Content, remarkPluginFrontmatter: meta } = await render(post);
 const articleProps = toArticleProps(meta, post.data, post.id);
 ---
 
-<BlogArticle {...articleProps}>
+<ProseArticle {...articleProps}>
   <Content />
-</BlogArticle>
+</ProseArticle>
