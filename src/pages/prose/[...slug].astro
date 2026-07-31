@@ -1,24 +1,28 @@
 ---
-import { type CollectionEntry, getCollection, render } from "astro:content";
+import { type CollectionEntry, render } from "astro:content";
 import ProseArticle from "../../layouts/ProseArticle.astro";
-import { toArticleProps } from "../../lib/article-props";
+import {
+  toArticleProps,
+  type ArticleNavigationProps,
+} from "../../lib/article-props";
+import { getPostCatalogEntries } from "../../lib/series-catalog";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("prose");
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: post,
+  const posts = await getPostCatalogEntries("prose");
+  return posts.map(({ entry, routeSlug, previous, next }) => ({
+    params: { slug: routeSlug },
+    props: { post: entry, previous, next },
   }));
 }
 
-type Props = CollectionEntry<"prose">;
+type Props = ArticleNavigationProps & { post: CollectionEntry<"prose"> };
 
-const post = Astro.props;
+const { post, previous, next } = Astro.props;
 const { Content, remarkPluginFrontmatter: meta } = await render(post);
 
-const articleProps = toArticleProps(meta, post.data, post.id);
+const articleProps = toArticleProps(meta, post.data, post.id, post.filePath);
 ---
 
-<ProseArticle {...articleProps}>
+<ProseArticle {...articleProps} previous={previous} next={next}>
   <Content />
 </ProseArticle>

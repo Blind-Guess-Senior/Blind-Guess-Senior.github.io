@@ -15,9 +15,9 @@ function truncate(text, maxLength) {
 
 export function remarkDocumentMetadata() {
   return function (tree, file) {
-    const filePath = file.history[0];
+    const fileName = file.history[0];
 
-    const title = basename(filePath, extname(filePath));
+    const title = basename(fileName, extname(fileName));
 
     const paragraph = tree.children.find(
       (node) => node.type === "paragraph" && toString(node).trim().length > 0,

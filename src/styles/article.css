@@ -32,6 +32,14 @@ main {
     font-size: 1.15em;
 }
 
+.prose h5 {
+    font-size: 1.05em;
+}
+
+.prose h6 {
+    font-size: 0.95em;
+}
+
 .prose p,
 .prose li {
     font-size: 0.85em;

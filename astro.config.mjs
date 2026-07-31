@@ -61,7 +61,7 @@ export default defineConfig({
   markdown: {
     processor: unified({
       remarkPlugins: [
-        [remarkObsidianWikilinks, { vaultRootPath: "./src/content" }],
+        remarkObsidianWikilinks,
         remarkUpdateTime,
         remarkDocumentMetadata,
       ],

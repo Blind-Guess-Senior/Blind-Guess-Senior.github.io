@@ -11,7 +11,8 @@
     "build": "astro check && astro build",
     "check": "astro check",
     "clean": "node -e \"require('node:fs').rmSync('.astro', { recursive: true, force: true })\"",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "rebuild": "pnpm run clean && pnpm run build"
   },
   "keywords": [],
   "author": "Blind Guess Senior",
@@ -27,7 +28,8 @@
     "github-slugger": "^2.0.0",
     "mdast-util-find-and-replace": "^3.0.2",
     "mdast-util-to-string": "^4.0.0",
-    "sharp": "^0.35.3"
+    "sharp": "^0.35.3",
+    "vfile": "^6.0.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",

@@ -1,11 +1,9 @@
 ---
-import { Image } from "astro:assets";
-import TagIcon from "../assets/icons/tag-janjf93-day-1727489.svg";
-import { type PostSummary } from "../lib/post-summary";
-import FormattedDate from "./FormattedDate.astro";
+import PostCard from "./PostCard.astro";
+import { type PostListing } from "../lib/post-listing";
 
 type Props = {
-  posts: PostSummary[];
+  posts: PostListing[];
 };
 
 const { posts } = Astro.props;
@@ -13,27 +11,9 @@ const { posts } = Astro.props;
 
 <ul>
   {
-    posts.map((post) => (
-      <li class={`post post-${post.type}`}>
-        <a href={post.href}>
-          {post.heroImage && (
-            <Image width={720} height={360} src={post.heroImage} alt="" />
-          )}
-          <h4 class="title">{post.title}</h4>
-          <div class="meta">
-            <span class="date">
-              <FormattedDate date={post.publishedAt} />
-            </span>
-            {post.tags.length > 0 && (
-              <span class="tags">
-                <TagIcon width={12} height={12} aria-hidden="true" />
-                {post.tags.map((tag) => (
-                  <span class="tag">{tag}</span>
-                ))}
-              </span>
-            )}
-          </div>
-        </a>
+    posts.map((post, index) => (
+      <li class={`post post-${post.postType}`}>
+        <PostCard post={post} featured={index === 0} />
       </li>
     ))
   }
@@ -41,91 +21,35 @@ const { posts } = Astro.props;
 
 <style>
   ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    list-style-type: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    list-style: none;
     margin: 0;
     padding: 0;
   }
   ul li {
-    width: calc(50% - 1rem);
-  }
-  ul li * {
-    text-decoration: none;
-    transition: 0.2s ease;
+    width: 100%;
+    min-width: 0;
   }
   ul li:first-child {
-    width: 100%;
-    margin-bottom: 1rem;
-    text-align: center;
+    margin-bottom: 2rem;
   }
-  ul li:first-child img {
-    width: 100%;
-  }
-  ul li:first-child .title {
-    font-size: 2.369rem;
-  }
-  ul li img {
-    margin-bottom: 0.5rem;
-    border-radius: 12px;
-  }
-  ul li a {
-    display: block;
-  }
-  .title {
-    margin: 0;
-    color: rgb(var(--black));
-    line-height: 1;
-  }
-  .date {
-    margin: 0;
-    color: rgb(var(--gray));
-  }
-  .meta {
-    display: flex;
-    align-items: baseline;
-    gap: 0.75em;
-  }
-  .tags {
-    flex: 0 1 auto;
-    min-width: 0;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.35em 0.5em;
-    max-height: 1.4em;
-    overflow: hidden;
-    color: rgb(var(--gray));
-    font-size: 0.85em;
-  }
-  .tag {
-    white-space: nowrap;
-  }
-  ul li:first-child .meta {
-    justify-content: center;
+  ul li:not(:first-child) {
+    border-top: 1px solid rgb(var(--gray-light));
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
   }
 
-  ul li a:hover h4,
-  ul li a:hover .date {
-    color: rgb(var(--accent));
-  }
-  ul a:hover img {
-    box-shadow: var(--box-shadow);
-  }
   @media (max-width: 720px) {
     ul {
       gap: 0.5em;
     }
     ul li {
       width: 100%;
-      text-align: center;
     }
     ul li:first-child {
       margin-bottom: 0;
-    }
-    ul li:first-child .title {
-      font-size: 1.563em;
     }
   }
 </style>

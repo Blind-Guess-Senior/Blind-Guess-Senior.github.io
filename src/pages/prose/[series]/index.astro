@@ -1,0 +1,34 @@
+---
+import SeriesIndex from "../../../layouts/SeriesIndex.astro";
+import {
+  getPostCatalog,
+  type SeriesCatalogGroup,
+} from "../../../lib/series-catalog";
+
+export async function getStaticPaths() {
+  const catalog = await getPostCatalog();
+
+  return catalog.series
+    .filter(
+      (group) =>
+        group.postType === "prose" &&
+        group.definition.data["series-listing"] === "series",
+    )
+    .map((group) => ({
+      params: {
+        series: group.definition.id,
+      },
+      props: {
+        series: group,
+      },
+    }));
+}
+
+type Props = {
+  series: SeriesCatalogGroup;
+};
+
+const { series } = Astro.props;
+---
+
+<SeriesIndex series={series} />

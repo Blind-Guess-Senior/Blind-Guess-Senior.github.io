@@ -1,5 +1,4 @@
 ---
-heroImage:
 tags:
   - NixOS
   - Server

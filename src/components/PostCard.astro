@@ -1,0 +1,145 @@
+---
+import { Image } from "astro:assets";
+import FormattedDate from "./FormattedDate.astro";
+import type { PostListing } from "../lib/post-listing";
+import "../styles/card.css";
+import TagIcon from "../assets/icons/tag-janjf93-day-1727489.svg";
+
+type Props = {
+  post: PostListing;
+  featured?: boolean;
+};
+
+const { post, featured = false } = Astro.props;
+---
+
+<a
+  class:list={{
+    card: true,
+    featured,
+    "has-cover": post.coverImage !== undefined,
+  }}
+  href={post.href}
+>
+  {
+    post.coverImage && (
+      <div class="card-media">
+        <Image
+          width={featured ? 1440 : 720}
+          height={featured ? 720 : 360}
+          src={post.coverImage}
+          alt=""
+        />
+      </div>
+    )
+  }
+  <div class="card-body">
+    <h4 class="title">{post.title}</h4>
+    <div class="meta">
+      <span class="date">
+        <FormattedDate date={post.publishedAt} />
+      </span>
+      {
+        post.tags.length > 0 && (
+          <span class="tags">
+            <TagIcon width={12} height={12} aria-hidden="true" />
+            {post.tags.map((tag) => (
+              <span class="tag">{tag}</span>
+            ))}
+          </span>
+        )
+      }
+    </div>
+  </div>
+</a>
+
+<style>
+  .card {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas: "card-body";
+    width: 100%;
+    min-width: 0;
+  }
+  .card-body {
+    grid-area: card-body;
+  }
+  .card-media {
+    grid-area: card-media;
+  }
+
+  .card:not(.featured) {
+    min-height: 8rem;
+    padding-right: 0.5rem;
+  }
+  .card.has-cover:not(.featured) {
+    grid-template-columns: minmax(0, 1fr) clamp(220px, 32%, 300px);
+    grid-template-areas: "card-body card-media";
+    gap: 1.5rem;
+  }
+  .card:not(.featured) .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1.25rem 0;
+  }
+  .card:not(.featured) .card-media {
+    align-self: center;
+    aspect-ratio: 2 / 1;
+    overflow: hidden;
+    border-radius: 8px;
+    margin: 0.5rem 0.5rem 0.5rem 0;
+  }
+  .card:not(.featured) .card-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    object-fit: cover;
+    border-radius: inherit;
+  }
+
+  .card.featured {
+    display: block;
+    text-align: center;
+    margin-bottom: -1rem;
+  }
+  .card.featured .card-media {
+    margin-bottom: 2rem;
+  }
+  .card.featured .card-media img {
+    display: block;
+    width: 100%;
+    border-radius: 12px;
+  }
+  .card.featured .title {
+    font-size: 2.369rem;
+  }
+  .card.featured .meta {
+    justify-content: center;
+  }
+
+  @media (max-width: 720px) {
+    .card.has-cover:not(.featured) {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "card-media"
+        "card-body";
+      gap: 0;
+    }
+
+    .card:not(.featured) {
+      padding-right: 0;
+    }
+    .card:not(.featured) .card-body {
+      padding: 0.75rem 0 1rem;
+    }
+    .card:not(.featured) .card-media {
+      padding: 0.25rem 0 0;
+    }
+
+    .card.featured .title {
+      font-size: 1.563em;
+    }
+  }
+</style>

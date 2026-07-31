@@ -1,0 +1,148 @@
+---
+import { Image } from "astro:assets";
+import { render } from "astro:content";
+import FormattedDate from "./FormattedDate.astro";
+import {
+  toArticleProps,
+  type ArticleNavigationProps,
+  type RelatedPost,
+} from "../lib/article-props";
+import "../styles/card.css";
+import TagIcon from "../assets/icons/tag-janjf93-day-1727489.svg";
+
+type Props = ArticleNavigationProps;
+
+const { previous, next } = Astro.props;
+const visible = previous !== undefined || next !== undefined;
+
+async function resolveRelatedPost(related: RelatedPost | undefined) {
+  if (related === undefined) {
+    return undefined;
+  }
+
+  const { remarkPluginFrontmatter: meta } = await render(related.entry);
+
+  return {
+    ...toArticleProps(
+      meta,
+      related.entry.data,
+      related.entry.id,
+      related.entry.filePath,
+    ),
+    href: related.href,
+  };
+}
+
+const [previousPost, nextPost] = await Promise.all([
+  resolveRelatedPost(previous),
+  resolveRelatedPost(next),
+]);
+---
+
+{
+  visible && (
+    <nav aria-label="文章导航">
+      <div class="previous">
+        &larr;
+        {previousPost && (
+          <a class="card" href={previousPost.href}>
+            {previousPost.coverImage && (
+              <Image
+                width={500}
+                height={250}
+                src={previousPost.coverImage}
+                alt=""
+              />
+            )}
+            <h4 class="title">{previousPost.title}</h4>
+
+            <div class="meta">
+              <span class="date">
+                <FormattedDate date={previousPost.publishedAt} />
+              </span>
+              {previousPost.tags.length > 0 && (
+                <span class="tags">
+                  <TagIcon width={12} height={12} aria-hidden="true" />
+                  {previousPost.tags.map((tag) => (
+                    <span class="tag">{tag}</span>
+                  ))}
+                </span>
+              )}
+            </div>
+          </a>
+        )}
+      </div>
+      <div class="next">
+        &rarr;
+        {nextPost && (
+          <a class="card" href={nextPost.href}>
+            {nextPost.coverImage && (
+              <Image
+                width={500}
+                height={250}
+                src={nextPost.coverImage}
+                alt=""
+              />
+            )}
+            <h4 class="title">{nextPost.title}</h4>
+
+            <div class="meta">
+              <span class="date">
+                <FormattedDate date={nextPost.publishedAt} />
+              </span>
+              {nextPost.tags.length > 0 && (
+                <span class="tags">
+                  <TagIcon width={12} height={12} aria-hidden="true" />
+                  {nextPost.tags.map((tag) => (
+                    <span class="tag">{tag}</span>
+                  ))}
+                </span>
+              )}
+            </div>
+          </a>
+        )}
+      </div>
+    </nav>
+  )
+}
+
+<style>
+  nav {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgb(var(--gray-light));
+    font-size: 0.85em;
+  }
+
+  nav > div {
+    min-width: 0;
+  }
+
+  nav .card {
+    display: block;
+    width: 75%;
+    max-width: 320px;
+  }
+  nav .card img {
+    display: block;
+    width: 100%;
+    margin: 0 0 0.3rem;
+    border-radius: 12px;
+  }
+
+  .previous .card {
+    margin-right: auto;
+  }
+  .next {
+    text-align: right;
+  }
+  .next .card {
+    margin-left: auto;
+  }
+  .next .card .meta {
+    justify-content: flex-end;
+  }
+</style>

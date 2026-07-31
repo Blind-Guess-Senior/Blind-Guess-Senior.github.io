@@ -1,0 +1,31 @@
+---
+import PostIndex from "./PostIndex.astro";
+import { toArticleListing, toSeriesListing } from "../lib/post-listing";
+import type { SeriesCatalogGroup } from "../lib/series-catalog";
+
+type Props = {
+  series: SeriesCatalogGroup;
+};
+
+const { series } = Astro.props;
+
+const chapters = await Promise.all(series.members.map(toArticleListing));
+
+const listing = toSeriesListing(series, chapters);
+---
+
+<PostIndex title={listing.title} description={listing.description}>
+  <section>
+    <h1>{listing.title}</h1>
+
+    <ol>
+      {
+        chapters.map((chapter) => (
+          <li>
+            <a href={chapter.href}>{chapter.title}</a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</PostIndex>

@@ -1,23 +1,37 @@
 import type { CollectionEntry } from "astro:content";
 import { z } from "astro/zod";
-import type { POST_TYPES } from "./post-route";
+import type { PostType, POST_TYPES } from "./post-route";
+import { getCoverImage } from "./cover-image-loader";
 
 export type ArticleProps = {
   title: string;
   description: string;
   publishedAt: Date;
   updatedAt: Date;
-  heroImage?: ImageMetadata | undefined;
+  coverImage?: ImageMetadata | undefined;
   tags: string[];
 };
 
+export type TypedPostEntry<T extends PostType = PostType> = {
+  postType: T;
+  entry: CollectionEntry<T>;
+};
+
+export type RelatedPost<T extends PostType = PostType> = TypedPostEntry<T> & {
+  href: string;
+};
+
+export type ArticleNavigationProps = {
+  previous: RelatedPost | undefined;
+  next: RelatedPost | undefined;
+};
+
+export type ArticleWithNavigationProps = ArticleProps & ArticleNavigationProps;
+
 type PostEntries = CollectionEntry<(typeof POST_TYPES)[number]>;
 
-// Only pick heroImage and tags data.
-type ValidatedArticlePredefinedData = Pick<
-  PostEntries["data"],
-  "heroImage" | "tags"
->;
+// Only pick tags data.
+type ValidatedArticlePredefinedData = Pick<PostEntries["data"], "tags">;
 
 const ArticleGeneratedDataSchema = z.object({
   title: z.string(),
@@ -30,6 +44,7 @@ export function toArticleProps(
   raw: Record<string, unknown>,
   predefinedData: ValidatedArticlePredefinedData,
   id: string,
+  filePath: string | undefined,
 ): ArticleProps {
   const articleGeneratedDataParseResult =
     ArticleGeneratedDataSchema.safeParse(raw);
@@ -50,7 +65,7 @@ export function toArticleProps(
     description,
     publishedAt,
     updatedAt,
-    heroImage: predefinedData.heroImage,
+    coverImage: filePath !== undefined ? getCoverImage(filePath) : undefined,
     tags: predefinedData.tags,
   };
 }

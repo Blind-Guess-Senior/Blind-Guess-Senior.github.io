@@ -1,10 +1,10 @@
 ---
-import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
-import { getPostSummaries } from "../../lib/post-summary";
 import PostIndex from "../../layouts/PostIndex.astro";
 import PostList from "../../components/PostList.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+import { getPostListings } from "../../lib/post-listing";
 
-const posts = await getPostSummaries("blog");
+const posts = await getPostListings("blog");
 ---
 
 <PostIndex title={`Blog | ${SITE_TITLE}`} description={SITE_DESCRIPTION}>

@@ -2,7 +2,7 @@ import { glob } from "astro/loaders";
 import { createPostId, type PostType } from "./post-route";
 
 export function createPostLoader(basePath: string, postType: PostType) {
-  const generatedIds = new Map<string, string>(); // slug -> filePath
+  const generatedIds = new Map<string, string>(); // entryId -> filePath
 
   return glob({
     base: basePath,
@@ -14,7 +14,7 @@ export function createPostLoader(basePath: string, postType: PostType) {
       const existingEntry = generatedIds.get(id);
       if (existingEntry !== undefined && existingEntry !== entry) {
         throw new Error(
-          `[${postType}] Slug collision: "${existingEntry}" and "${entry}" both generate "${id}"`,
+          `[${postType}] Entry ID collision: "${existingEntry}" and "${entry}" both generate "${id}"`,
         );
       }
       generatedIds.set(id, entry);

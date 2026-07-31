@@ -1,5 +1,4 @@
 ---
-heroImage:
 tags:
   - NixOS
   - Server
@@ -94,7 +93,7 @@ inputs = {
 ### Deploy SakuraFrp
 
 配置樱花映射，以将服务器穿透至外部网络。
-见 [[NixOS SakuraFrp Deploy]] 
+见 [[posts/blog/NixOS/NixOS SakuraFrp Deploy|NixOS SakuraFrp Deploy]] 
 
 ### References
 

@@ -1,4 +1,3 @@
 ---
-heroImage:
 tags:
 ---

@@ -5,10 +5,10 @@ import {
   type FindAndReplaceTuple,
 } from "mdast-util-find-and-replace";
 import {
-  createArticleIndex,
-  resolveFileLinkTarget,
-  type ArticleIndex,
-} from "./article-index";
+  createNormalPostSlug,
+  createPostId,
+  normalizeArticlePath,
+} from "../../src/lib/post-route";
 
 const WIKILINK_PATTERN = /(?<!!)\[\[([^\]\r\n]+)\]\]/g;
 
@@ -16,10 +16,6 @@ type WikilinkParts = {
   target?: string;
   heading?: string;
   displayLabel?: string;
-};
-
-type RemarkObsidianWikilinkOptions = {
-  vaultRootPath: string;
 };
 
 export function parseWikiLink(wikilink: string): WikilinkParts {
@@ -55,35 +51,27 @@ export function parseWikiLink(wikilink: string): WikilinkParts {
   return result;
 }
 
-function resolveHref(
-  parts: WikilinkParts,
-  index: ArticleIndex,
-): string | undefined {
+function resolveHref(parts: WikilinkParts): string | undefined {
   const fragment = parts.heading ? `#${slug(parts.heading)}` : "";
   if (parts.target === undefined) {
     return fragment;
   }
+  const target = normalizeArticlePath(parts.target);
+  const routeRoot = target.split("/")[1];
 
-  const article = resolveFileLinkTarget(parts.target, index);
-  if (article === undefined) {
-    return undefined;
-  }
+  const routeSlug = createNormalPostSlug(createPostId(target));
 
-  return `${article.href}${fragment}`;
+  return `/${routeRoot}/${routeSlug}${fragment}`;
 }
 
-export function remarkObsidianWikilinks(
-  options: RemarkObsidianWikilinkOptions,
-) {
-  const index = createArticleIndex(options.vaultRootPath);
-
+export function remarkObsidianWikilinks() {
   return function transformer(tree: Root) {
     const replacement: FindAndReplaceTuple = [
       WIKILINK_PATTERN,
       (_match: string, value: string) => {
         const parts = parseWikiLink(value);
 
-        const url = resolveHref(parts, index);
+        const url = resolveHref(parts);
         if (url === undefined) {
           return false;
         }
