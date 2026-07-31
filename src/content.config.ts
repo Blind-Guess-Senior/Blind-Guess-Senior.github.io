@@ -13,7 +13,10 @@ const blog = defineCollection({
         (path) => (path === "" || path === null ? undefined : path),
         z.optional(image()),
       ),
-      tags: z.array(z.string()).default([]),
+      tags: z.preprocess(
+        (tags) => (tags === null ? undefined : tags),
+        z.array(z.string()).default([]),
+      ),
     }),
 });
 

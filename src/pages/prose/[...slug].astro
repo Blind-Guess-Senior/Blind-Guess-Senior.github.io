@@ -11,7 +11,7 @@ export async function getStaticPaths() {
   }));
 }
 
-type Props = CollectionEntry<"blog">;
+type Props = CollectionEntry<"prose">;
 
 const post = Astro.props;
 const { Content, remarkPluginFrontmatter: meta } = await render(post);

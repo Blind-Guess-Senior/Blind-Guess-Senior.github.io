@@ -1,7 +1,7 @@
 import { getCollection, render } from "astro:content";
 import { type ArticleProps } from "./article-props";
 import { toArticleProps } from "./article-props";
-import { type PostType } from "./post-loader-creator";
+import { createPostHref, POST_TYPES, type PostType } from "./post-route";
 
 export type PostSummary = ArticleProps & {
   id: string;
@@ -25,7 +25,7 @@ export async function getPostSummaries(
         ...toArticleProps(remarkPluginFrontmatter, entry.data, entry.id),
         id: entry.id,
         type: postType,
-        href: `/${postType}/${entry.id}/`,
+        href: createPostHref(postType, entry.id),
       };
     }),
   );
@@ -34,10 +34,9 @@ export async function getPostSummaries(
 }
 
 export async function getAllPostSummaries(): Promise<PostSummary[]> {
-  const [blogPosts, prosePosts] = await Promise.all([
-    getPostSummaries("blog"),
-    getPostSummaries("prose"),
-  ]);
+  const allPosts = await Promise.all(
+    POST_TYPES.map((type) => getPostSummaries(type)),
+  );
 
-  return sortByUpdatedAt([...blogPosts, ...prosePosts]);
+  return sortByUpdatedAt(allPosts.flat());
 }

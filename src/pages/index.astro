@@ -1,7 +1,7 @@
 ---
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import { getAllPostSummaries } from "../lib/post-summary";
-import PostIndex from "../layouts/lib/PostIndex.astro";
+import PostIndex from "../layouts/PostIndex.astro";
 import PostList from "../components/PostList.astro";
 
 const posts = await getAllPostSummaries();

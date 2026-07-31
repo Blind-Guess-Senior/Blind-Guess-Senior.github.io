@@ -1,8 +1,5 @@
 import { glob } from "astro/loaders";
-import { slug } from "github-slugger";
-import { basename, extname } from "node:path";
-
-export type PostType = "blog" | "prose";
+import { createPostId, type PostType } from "./post-route";
 
 export function createPostLoader(basePath: string, postType: PostType) {
   const generatedIds = new Map<string, string>(); // slug -> filePath
@@ -12,8 +9,7 @@ export function createPostLoader(basePath: string, postType: PostType) {
     pattern: "**/*.{md,mdx}",
 
     generateId({ entry }): string {
-      const filename = basename(entry, extname(entry));
-      const id = slug(filename);
+      const id = createPostId(entry);
 
       const existingEntry = generatedIds.get(id);
       if (existingEntry !== undefined && existingEntry !== entry) {

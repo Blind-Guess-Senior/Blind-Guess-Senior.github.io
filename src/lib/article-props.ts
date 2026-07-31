@@ -1,5 +1,6 @@
 import type { CollectionEntry } from "astro:content";
 import { z } from "astro/zod";
+import type { POST_TYPES } from "./post-route";
 
 export type ArticleProps = {
   title: string;
@@ -10,7 +11,7 @@ export type ArticleProps = {
   tags: string[];
 };
 
-type PostEntries = CollectionEntry<"blog"> | CollectionEntry<"prose">;
+type PostEntries = CollectionEntry<(typeof POST_TYPES)[number]>;
 
 // Only pick heroImage and tags data.
 type ValidatedArticlePredefinedData = Pick<

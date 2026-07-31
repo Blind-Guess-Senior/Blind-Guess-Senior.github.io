@@ -28,14 +28,12 @@ export function remarkDocumentMetadata() {
           toString(paragraph).replace(/\s+/g, " ").trim(),
           DESCRIPTION_MAX_LENGTH,
         )
-      : undefined;
+      : "";
 
     file.data.astro ??= {};
     file.data.astro.frontmatter ??= {};
 
     file.data.astro.frontmatter.title = title;
-    if (!!description) {
-      file.data.astro.frontmatter.description = description;
-    }
+    file.data.astro.frontmatter.description = description;
   };
 }

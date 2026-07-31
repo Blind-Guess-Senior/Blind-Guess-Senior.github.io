@@ -4,6 +4,7 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { defineConfig, fontProviders } from "astro/config";
 import { unified } from "@astrojs/markdown-remark";
+import { remarkObsidianWikilinks } from "./plugins/obsidianWililinkRamarker/remark-obsidian-wikilinks";
 import { remarkUpdateTime } from "./plugins/documentMetadataRemarker/remark-git-dates.mjs";
 import { remarkDocumentMetadata } from "./plugins/documentMetadataRemarker/remark-title-and-desc.mjs";
 
@@ -59,7 +60,11 @@ export default defineConfig({
   ],
   markdown: {
     processor: unified({
-      remarkPlugins: [remarkUpdateTime, remarkDocumentMetadata],
+      remarkPlugins: [
+        [remarkObsidianWikilinks, { vaultRootPath: "./src/content" }],
+        remarkUpdateTime,
+        remarkDocumentMetadata,
+      ],
     }),
   },
 });
