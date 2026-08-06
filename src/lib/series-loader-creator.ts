@@ -6,7 +6,7 @@ export function createSeriesLoader(basePath: string) {
 
   return glob({
     base: basePath,
-    pattern: "**/series.yaml",
+    pattern: "**/*series.yaml",
 
     generateId({ entry, data }): string {
       const seriesIDRaw = data["series-id"];
