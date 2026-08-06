@@ -4,6 +4,9 @@ const today = new Date();
 
 <footer>
   &copy; {today.getFullYear()} Blind Guess Senior. All rights reserved.
+  <div class="ref-links">
+    Powered by <a href="https://astro.build" target="_blank"> Astro</a>
+  </div>
   <div class="social-links">
     <!-- <a href="https://m.webtoo.ls/@astro" target="_blank">
 			<span class="sr-only">Follow Astro on Mastodon</span>
@@ -87,6 +90,14 @@ const today = new Date();
     color: rgb(var(--gray));
   }
   .social-links a:hover {
+    color: rgb(var(--gray-dark));
+  }
+  .ref-links a {
+    align-items: center;
+    text-decoration: none;
+    color: rgb(var(--gray-dark));
+  }
+  .ref-links a:hover {
     color: rgb(var(--gray-dark));
   }
 </style>
