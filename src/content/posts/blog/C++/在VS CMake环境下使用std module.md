@@ -78,36 +78,39 @@ int main(const int argc, const char* argv[])
 ```
 例如这段代码将会运行良好。
 
-但在VS 18.8.2 stable版本下，intellisense对CMake管理的import sdt支持不是很好，错误列表会一直误报，代码补全也疑似会坏掉。需要代码补全可以用 *Jetbrains Resharper* ，但错误列表目前没找到好的解决方案，只能以实际构建为准了。
+但在VS 18.8.2 stable版本下，intellisense对CMake管理的import std支持不是很好，错误列表会一直误报，代码补全也疑似会坏掉。需要代码补全可以用 *Jetbrains Resharper* ，但错误列表目前没找到好的解决方案，只能以实际构建为准了。
 
 ### 补充
 
+#### 常规方法开启 `import std`
+
 VS官方有对开启 `import std` 的文档指引[^4]，但对于CMake项目这是不必要的，CMake的 `CXX_MODULE_STD ON` 已经会在CMake的缓存里正确构建std的target。这里也简单提及一下。
 
-#### 编译std
+##### 编译std
 
 根据VS官方文档的指引[^4]，我们应该将标准库的具名module编译为二进制形式。切换到项目文件夹，在vs的命令行中执行
 ```cmd
 cl /std:c++latest /EHsc /nologo /W4 /c "%VCToolsInstallDir%\modules\std.ixx"
 ```
 
-随后项目目录将会出现 `std.ifc` 和 `std.obj`. 这对应了 `import std;` 的用法。
+随后项目目录将会出现 `std.ifc` 和 `std.obj`. 生成的文件会用于 `import std` .
 
 这两个文件的位置不会带来影响，可以自由地将它们放到诸如 `lib/std` 这样的子文件夹里。
 
-#### 编译std.compat
+##### 编译std.compat
 
 同样，我们执行
 ```cmd
 cl /std:c++latest /EHsc /nologo /W4 /c "%VCToolsInstallDir%\modules\std.ixx" "%VCToolsInstallDir%\modules\std.compat.ixx"
 ```
 
-这对应了 `import std.compat` 的用法。
+生成的 `std.compat.ifc` 和 `std.compat.obj` 会用于 `import std.compat` .
 
 ### References
+
+- [c++ - How to use CMake to build a project with C++23 standard library module(import std)? - Stack Overflow](https://stackoverflow.com/questions/76268455/how-to-use-cmake-to-build-a-project-with-c23-standard-library-moduleimport-st) 
 
 [^1]: [CMake/Help/dev/experimental.rst at master · Kitware/CMake](https://github.com/Kitware/CMake/blob/master/Help/dev/experimental.rst) 
 [^2]: [CXX_SCAN_FOR_MODULES — CMake 4.4.0 文档 - CMake 构建系统](https://cmake.com.cn/cmake/help/latest/prop_tgt/CXX_SCAN_FOR_MODULES.html#prop_tgt:CXX_SCAN_FOR_MODULES) 
 [^3]: [CXX_MODULE_STD — CMake 4.4.0 文档 - CMake 构建系统](https://cmake.com.cn/cmake/help/latest/prop_tgt/CXX_MODULE_STD.html) 
 [^4]: [教程：使用命令行中的模块导入标准库 （STL）（C++） | Microsoft Learn](https://learn.microsoft.com/zh-cn/cpp/cpp/tutorial-import-stl-named-module?view=msvc-180) 
-- [c++ - How to use CMake to build a project with C++23 standard library module(import std)? - Stack Overflow](https://stackoverflow.com/questions/76268455/how-to-use-cmake-to-build-a-project-with-c23-standard-library-moduleimport-st) 
