@@ -202,7 +202,7 @@ module; // 标识这是个 global module fragement
 module ModuleName; // 假设这是个实现单元
 ```
 
-这样的话就可以使用常规的头文件了。
+这样的话就可以使用常规的头文件了。头文件和宏都只会在该文件内可用，不会被 export 出去。
 
 ### References
 
