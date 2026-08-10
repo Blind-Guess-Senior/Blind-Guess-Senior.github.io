@@ -99,7 +99,7 @@ asio::async_read_until(
 - 第三个参数为终止符，函数名是 read_until，意思是 “一直读直到……” 这里的终止符就是那个“直到”，当读到这个字符的时候，该次读取就会结束；
 - 第四个参数是一个 `ReadToken` ，是 Boost 对读取行为的抽象，这个行为应当能接收 `(boost::system::error_code, std::size_t)` 这两个参数，
 
-由于我在网上没有找到 **任何** 与之相关的描述，Boost 的文档[^1]也 **完全没有** 给出任何有用的信息（看这文档还不如看源码注释），因此关于第四个参数的信息完全来自于源码[^2]和 GPT 5.6-Sol 基于源码的回答。并且第四个参数的描述里仅考虑了传入一个回调函数的情况，这个回调函数会在 read_until 完成时（即读到了终止符后）被调用，没有考虑 `asio::future` 和 `co_await` 的情况。 
+由于我在网上没有找到 **任何** 与之相关的描述，Boost 的文档[^1]也 **完全没有** 给出任何有用的信息（看这文档还不如看源码注释），因此关于第四个参数的信息完全来自于源码[^2]和 GPT 5.6-Sol 基于源码的回答。并且第四个参数的描述里仅考虑了传入一个回调函数的情况，这个回调函数会在 read_until 完成时（即读到了终止符后）被调用，没有考虑 `asio::future` `co_await` 等情况。 
 
 因此，我们传入的参数应当为（以 `stdoutPipe` 为例）
 ```cpp
@@ -141,6 +141,8 @@ static void ReadLines(
 ```
 
 `ReadLines` 接收一个 `std::function<void(std::string_view)>` 作为对读到内容的处理函数，我们在 lambda 内部做 error 的处理，将实际读到的内容转发给 handler 来处理。lambda 里 capture 管道、缓冲区和错误码，以用于传递给下一次注册。这里 handler 不会有所有权问题，它是唯一的，所以我们总是可以 move 它。
+
+对于 `read_error`，直接创建一个 `std::optional<boost::system::error_code>` 传入即可。例如，我们可以定义 `std::optional<boost::system::error_code> stdoutError;` 并传入它作为 stdout 管道的错误码记录者。
 
 先简单做一下错误的处理，如果没有出现错误，那么一切正常，我们直接重新注册。
 ```cpp
@@ -218,13 +220,21 @@ ctx.run();
 
 io context 会在它管理的管道都关闭后自动退出。
 
+补充一点，可以在 `ctx.run()` 之后立即检查一次错误码来判断管道是不是一开始就出问题了。
+```cpp
+if (stdoutError) {
+	// do something
+}
+```
+由于我们的回调函数里已经处理了 `error == asio::error::eof` 的情况，所以这里不会因为该情况而进入分支。
+
 ### 结语
 
 以上，我们就完成了对外部程序的调用。由于我自己也是 C++ 的初学者，文章内容难免有不全面乃至错误的地方，如有发现，烦请指正。
 
 这篇文章里的代码可以在 [Blind-Guess-Senior/ProfileEncoder](https://github.com/Blind-Guess-Senior/ProfileEncoder) 找到。
 
-ps: include 编译是真的慢啊……
+PS: include 编译是真的慢啊……
 
 ### References
 
@@ -232,6 +242,7 @@ ps: include 编译是真的慢啊……
 - [ffmpeg Documentation](https://www.ffmpeg.org/ffmpeg.html) 
 - [C++开发回忆录之进程通信——管道 - 知乎](https://zhuanlan.zhihu.com/p/715615587) 
 - [C++管道通讯深入学习（基于开源项目分析） - 知乎](https://zhuanlan.zhihu.com/p/665919343) 
+- [cs.tufts.edu/comp/21/notes/C++\_boost\_asio/asio.html](https://www.cs.tufts.edu/comp/21/notes/C++_boost_asio/asio.html) 
 
 [^1]: [async_read_until](https://www.boost.org/doc/libs/latest/doc/html/boost_asio/reference/async_read_until.html) 
 
