@@ -1,9 +1,12 @@
-import type { Link, Root } from "mdast";
+import { dirname, extname, relative, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import type { Image, Link, Root } from "mdast";
 import { slug } from "github-slugger";
 import {
   findAndReplace,
   type FindAndReplaceTuple,
 } from "mdast-util-find-and-replace";
+import type { VFile } from "vfile";
 import {
   createNormalPostSlug,
   createPostId,
@@ -11,6 +14,17 @@ import {
 } from "../../src/lib/post-route";
 
 const WIKILINK_PATTERN = /(?<!!)\[\[([^\]\r\n]+)\]\]/g;
+const WIKIIMAGE_PATTERN = /!\[\[([^\]\r\n]+)\]\]/g;
+const IMAGE_EXTENSIONS = new Set([
+  ".avif",
+  ".gif",
+  ".jpeg",
+  ".jpg",
+  ".png",
+  ".svg",
+  ".webp",
+]);
+const VAULT_ROOT = fileURLToPath(new URL("../../src/content/", import.meta.url));
 
 type WikilinkParts = {
   target?: string;
@@ -64,8 +78,33 @@ function resolveHref(parts: WikilinkParts): string | undefined {
   return `/${routeRoot}/${routeSlug}${fragment}`;
 }
 
+function resolveImageUrl(target: string, filePath: string): string {
+  const imagePath = resolve(VAULT_ROOT, target);
+  const relativePath = relative(dirname(filePath), imagePath).replaceAll(
+    "\\",
+    "/",
+  );
+
+  return relativePath.startsWith(".") ? relativePath : `./${relativePath}`;
+}
+
 export function remarkObsidianWikilinks() {
-  return function transformer(tree: Root) {
+  return function transformer(tree: Root, file: VFile) {
+    const imageReplacement: FindAndReplaceTuple = [
+      WIKIIMAGE_PATTERN,
+      (_match: string, target: string) => {
+        if (!IMAGE_EXTENSIONS.has(extname(target).toLowerCase())) {
+          return false;
+        }
+
+        return {
+          type: "image",
+          url: resolveImageUrl(target, file.path),
+          alt: "",
+        } satisfies Image;
+      },
+    ];
+
     const replacement: FindAndReplaceTuple = [
       WIKILINK_PATTERN,
       (_match: string, value: string) => {
@@ -89,6 +128,7 @@ export function remarkObsidianWikilinks() {
       },
     ];
 
+    findAndReplace(tree, imageReplacement);
     findAndReplace(tree, replacement, {
       ignore: ["link", "linkReference"],
     });

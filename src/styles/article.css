@@ -45,6 +45,45 @@ main {
     font-size: 0.85em;
 }
 
+.prose table {
+    display: block;
+    width: fit-content;
+    max-width: calc(100% - 2em);
+    margin: 1.5em auto;
+    overflow-x: auto;
+    border-collapse: collapse;
+    border-right: 1px solid rgb(var(--gray-light));
+    border-left: 1px solid rgb(var(--gray-light));
+    border-top: 1px solid rgb(var(--gray-light));
+    border-bottom: 1px solid rgb(var(--gray-light));
+    font-size: 0.8em;
+    line-height: 1.45;
+    font-variant-numeric: tabular-nums;
+}
+
+.prose th,
+.prose td {
+    padding: 0.5em 0.7em;
+    border-bottom: 1px solid rgb(var(--gray-light));
+    text-align: left;
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+.prose th {
+    background-color: rgba(var(--gray-light), 0.55);
+    color: rgb(var(--black));
+    font-weight: 700;
+}
+
+.prose tbody tr:nth-child(even) {
+    background-color: rgba(var(--gray-light), 0.2);
+}
+
+.prose tbody tr:last-child td {
+    border-bottom: 0;
+}
+
 code {
     padding: 2px 5px;
     background-color: rgb(var(--gray-light));
