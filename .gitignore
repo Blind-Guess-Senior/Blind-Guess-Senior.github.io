@@ -148,9 +148,6 @@ vite.config.ts.timestamp-*
 # VScode
 .vscode/
 
-# Obsidian
-.obsidian
-
 # AI Agents
 .claude/
 .agents/
