@@ -4,6 +4,7 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { defineConfig, fontProviders } from "astro/config";
 import { unified } from "@astrojs/markdown-remark";
+import { rehypeCodeLanguage } from "./plugins/codeBlocksRemarker/rehype-code-language";
 import { remarkIndentedBlocks } from "./plugins/indentedBlocksRemarker/remark-indented-blocks";
 import { remarkObsidianWikilinks } from "./plugins/obsidianWililinkRamarker/remark-obsidian-wikilinks";
 import { remarkUpdateTime } from "./plugins/documentMetadataRemarker/remark-git-dates.mjs";
@@ -68,6 +69,7 @@ export default defineConfig({
         remarkUpdateTime,
         remarkDocumentMetadata,
       ],
+      rehypePlugins: [rehypeCodeLanguage],
     }),
   },
 });

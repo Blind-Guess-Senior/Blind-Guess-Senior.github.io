@@ -105,3 +105,27 @@ pre {
 .indented-note {
     padding-left: 1.4em;
 }
+
+/* 代码块外面这层只用来定位角标；滚动还是交给 pre 自己 */
+.code-block {
+    position: relative;
+    margin: 1em 0;
+}
+
+.code-block pre {
+    margin: 0;
+}
+
+/* 代码块右上角的语言角标 */
+.code-lang {
+    position: absolute;
+    top: 0.7em;
+    right: 1em;
+    color: rgba(225, 228, 232, 0.45);
+    font-family: var(--font-monaspace);
+    font-weight: 200;
+    font-size: 0.6em;
+    letter-spacing: 0.06em;
+    user-select: none;
+    pointer-events: none;
+}
