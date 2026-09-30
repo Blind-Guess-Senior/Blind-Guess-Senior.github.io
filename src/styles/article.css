@@ -100,3 +100,8 @@ pre {
     font-weight: 200;
     font-size: 0.75em;
 }
+
+/* 缩进块（Tab 写的旁注）按正文渲染，留一点缩进表示层级，不再是代码块的样子 */
+.indented-note {
+    padding-left: 1.4em;
+}
