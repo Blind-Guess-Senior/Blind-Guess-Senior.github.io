@@ -1,14 +1,14 @@
 // @ts-check
 
 import mdx from "@astrojs/mdx";
+import { satteri } from "@astrojs/markdown-satteri";
 import sitemap from "@astrojs/sitemap";
 import { defineConfig, fontProviders } from "astro/config";
-import { unified } from "@astrojs/markdown-remark";
-import { rehypeCodeLanguage } from "./plugins/codeBlocksRemarker/rehype-code-language";
-import { remarkIndentedBlocks } from "./plugins/indentedBlocksRemarker/remark-indented-blocks";
-import { remarkObsidianWikilinks } from "./plugins/obsidianWililinkRamarker/remark-obsidian-wikilinks";
-import { remarkUpdateTime } from "./plugins/documentMetadataRemarker/remark-git-dates.mjs";
-import { remarkDocumentMetadata } from "./plugins/documentMetadataRemarker/remark-title-and-desc.mjs";
+import { codeLanguagePlugin } from "./plugins/codeBlocksRemarker/satteri-code-language";
+import { indentedBlocksPlugin } from "./plugins/indentedBlocksRemarker/satteri-indented-blocks";
+import { obsidianWikilinksPlugin } from "./plugins/obsidianWililinkRamarker/satteri-obsidian-wikilinks";
+import { gitDatesPlugin } from "./plugins/documentMetadataRemarker/satteri-git-dates";
+import { documentMetadataPlugin } from "./plugins/documentMetadataRemarker/satteri-title-and-desc";
 
 // https://astro.build/config
 export default defineConfig({
@@ -61,15 +61,15 @@ export default defineConfig({
     },
   ],
   markdown: {
-    processor: unified({
-      remarkPlugins: [
+    processor: satteri({
+      mdastPlugins: [
         // 先把缩进块还原成正文，后面的插件才看得到里面的行内 markdown
-        remarkIndentedBlocks,
-        remarkObsidianWikilinks,
-        remarkUpdateTime,
-        remarkDocumentMetadata,
+        indentedBlocksPlugin,
+        obsidianWikilinksPlugin,
+        gitDatesPlugin,
+        documentMetadataPlugin,
       ],
-      rehypePlugins: [rehypeCodeLanguage],
+      hastPlugins: [codeLanguagePlugin()],
     }),
   },
 });
