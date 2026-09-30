@@ -8,6 +8,8 @@ export type ArticleProps = {
   description: string;
   publishedAt: Date;
   updatedAt: Date;
+  /** 精确到分钟的更新时间，只当排序键用（见 post-listing.ts），不展示。 */
+  updatedAtPrecise?: Date | undefined;
   coverImage?: ImageMetadata | undefined;
   tags: string[];
 };
@@ -38,6 +40,7 @@ const ArticleGeneratedDataSchema = z.object({
   description: z.string(),
   publishedAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
+  updatedAtPrecise: z.coerce.date().optional(),
 });
 
 export function toArticleProps(
@@ -57,7 +60,7 @@ export function toArticleProps(
     throw new Error(`[posts] "${id}" Invalid metadata: ${errorDetail}`);
   }
 
-  const { title, description, publishedAt, updatedAt } =
+  const { title, description, publishedAt, updatedAt, updatedAtPrecise } =
     articleGeneratedDataParseResult.data;
 
   return {
@@ -65,6 +68,7 @@ export function toArticleProps(
     description,
     publishedAt,
     updatedAt,
+    updatedAtPrecise,
     coverImage: filePath !== undefined ? getCoverImage(filePath) : undefined,
     tags: predefinedData.tags,
   };

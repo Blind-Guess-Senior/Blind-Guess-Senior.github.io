@@ -28,8 +28,13 @@ export type SeriesListing = ListingBase & {
 
 export type PostListing = ArticleListing | SeriesListing;
 
+/** 排序键：有精确到分钟的时间就用它，没有就退回 updatedAt（两者都只用于排序）。 */
+function sortingTimestamp(listing: ArticleProps): number {
+  return (listing.updatedAtPrecise ?? listing.updatedAt).valueOf();
+}
+
 function sortByUpdatedAt(posts: PostListing[]) {
-  return posts.sort((a, b) => b.updatedAt.valueOf() - a.updatedAt.valueOf());
+  return posts.sort((a, b) => sortingTimestamp(b) - sortingTimestamp(a));
 }
 
 export async function toArticleListing(
@@ -66,6 +71,10 @@ export function toSeriesListing(
   const updatedAt = new Date(
     Math.max(...chapters.map((chapter) => chapter.updatedAt.valueOf())),
   );
+  // 系列卡片也拿精确时间参与排序，和单篇一致
+  const updatedAtPrecise = new Date(
+    Math.max(...chapters.map((chapter) => sortingTimestamp(chapter))),
+  );
 
   return {
     kind: "series", // Listing entry that represent catalog/menu of a series-listing type series.
@@ -78,6 +87,7 @@ export function toSeriesListing(
     description: firstChapter.description,
     publishedAt: publishedAt,
     updatedAt: updatedAt,
+    updatedAtPrecise: updatedAtPrecise,
     coverImage: undefined,
     tags: group.definition.data.tags,
 

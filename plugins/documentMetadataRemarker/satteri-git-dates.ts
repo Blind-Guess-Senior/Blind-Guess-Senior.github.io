@@ -33,19 +33,25 @@ export function gitDatesPlugin(
         return;
       }
 
-      // git log 是新到旧；%x09 用来把日期和 subject 分开。
+      // git log 是新到旧；%x09 用来把日期和 subject 分开，%cI 是带时区的完整提交时间。
       const commits = execFileSync(
         "git",
-        ["log", "--follow", "--pretty=format:%cs%x09%s", "--", filePath],
+        ["log", "--follow", "--pretty=format:%cs%x09%cI%x09%s", "--", filePath],
         { encoding: "utf8" },
       )
         .split(/\r?\n/)
-        .map((line) => line.split("\t"))
-        .filter(([date, subject]) => date && subject);
+        .map((line) => {
+          const [date, timestamp, subject] = line.split("\t");
+          return { date, timestamp, subject };
+        })
+        .filter(
+          (commit): commit is { date: string; timestamp: string; subject: string } =>
+            Boolean(commit.date && commit.timestamp && commit.subject),
+        );
 
       // 只认内容提交：更新的取最新一条，发布的取最早一条。
       const contentCommits = commits.filter(
-        ([, subject]) => subject !== undefined && !ENGINEERING_COMMIT.test(subject),
+        (commit) => !ENGINEERING_COMMIT.test(commit.subject),
       );
       // 历史里一条内容提交都没有的文件（例如只由 init / feat 引入）没有内容日期
       // 可用，退回全量历史：日期至少是稳定的，不会随构建时间漂移。
@@ -57,9 +63,14 @@ export function gitDatesPlugin(
       }
 
       const now = new Date();
+      const newest = dated[0];
 
-      frontmatter.publishedAt ??= dated.length ? new Date(dated.at(-1)?.[0] ?? "") : now;
-      frontmatter.updatedAt = dated.length ? new Date(dated[0]?.[0] ?? "") : now;
+      frontmatter.publishedAt ??= dated.length
+        ? new Date(dated.at(-1)?.date ?? "")
+        : now;
+      frontmatter.updatedAt = newest ? new Date(newest.date) : now;
+      // 只当排序键用（首页/列表谁在上面），页面和 RSS 展示的仍是 updatedAt 那天。
+      frontmatter.updatedAtPrecise = newest ? new Date(newest.timestamp) : now;
     },
   };
 }
