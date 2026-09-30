@@ -101,9 +101,14 @@ pre {
     font-size: 0.75em;
 }
 
-/* 缩进块（Tab 写的旁注）按正文渲染，留一点缩进表示层级，不再是代码块的样子 */
+/* 缩进块（Tab 写的旁注）：淡底 + 细灰左线，一眼看出是附带说明；
+   引用块是蓝色的粗左线且字号略小，两者不会混 */
 .indented-note {
-    padding-left: 1.4em;
+    margin: 0.9em 0;
+    padding: 0.5em 0.9em;
+    border-left: 3px solid rgba(var(--gray), 0.35);
+    border-radius: 0 4px 4px 0;
+    background-color: rgba(var(--gray-light), 0.45);
 }
 
 /* 代码块外面这层只用来定位角标；滚动还是交给 pre 自己 */
