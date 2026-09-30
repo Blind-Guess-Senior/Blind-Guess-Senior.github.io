@@ -118,7 +118,9 @@ blockquote {
 	border-left: 4px solid var(--accent);
 	padding: 0 0 0 20px;
 	margin: 0;
-	font-size: 1.333em;
+	/* 引用块里的正文由 .prose p 的 0.85em 相对这里再缩一档，
+	   所以这里给 0.94em：引用文字最终是正文的 94%，比正文略小一点。 */
+	font-size: 0.94em;
 }
 
 hr {
